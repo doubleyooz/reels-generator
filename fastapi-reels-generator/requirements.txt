@@ -1,5 +1,7 @@
-fastapi
-pydantic
+fastapi[standard]
 uvicorn[standard]
+pydantic
 opencv-python
+python-multipart
 numpy
+sqlalchemy

@@ -1,5 +1,16 @@
 /.venv
+/__pycache__
+.env
+
 background_music.mp3
 background_video.mp4
 center_image.png
+
+img1.png
+img2.png
+img3.png
+
 output_reel.mp4
+output_reel_single.mp4
+output_reel_two.mp4
+output_reel_three.mp4
