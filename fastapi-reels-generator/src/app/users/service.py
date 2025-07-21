@@ -54,6 +54,19 @@ class UserService:
         user = await self.repository.find_by_id(_id)
         return User.from_orm(user) if user else None
 
+    async def find_by_email(self, email: str) -> Optional[User]:
+        """
+        Retrieve a user by its ID.
+        
+        Args:
+            _id: The ID of the user to retrieve.
+        
+        Returns:
+            The User object if found, else None.
+        """
+        user = await self.repository.find_one( {"email": email} )
+        return User.from_orm(user) if user else None
+
     async def update(self, _id: int, user_update_data: UserUpdateModel) -> Optional[User]:
         """
         Update a user by its ID.

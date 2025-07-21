@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 # app/database.py
-from src.config import DB_CONNECTION
+from src.env import DB_CONNECTION
 from src.app.users.schema import User
 from src.app.reels.schema import Reel
 

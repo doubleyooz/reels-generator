@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from src.db.database import Database
 from src.app.reels.service import ReelService
 from src.app.reels.schema import ReelCreateModel, ReelUpdateModel, ReelResponse
-from src.app.reels.exception import ReelBadRequest, ReelNotFound
+from src.app.reels.exception import ReelBadRequestException, ReelNotFoundException
 
 async def get_reel_service(app: FastAPI = Depends(lambda: app)) -> ReelService:
     """Dependency to provide ReelService with initialized Database."""
@@ -23,14 +23,14 @@ async def create(reel_data: ReelCreateModel, reel_service: ReelService = Depends
     try:
         return await reel_service.create(reel_data)
     except IntegrityError:
-        raise ReelBadRequest()
+        raise ReelBadRequestException()
 
 @router.get("/{_id}", response_model=ReelResponse)
 async def find_by_id(_id: int, reel_service: ReelService = Depends(get_reel_service)):
     """Retrieve a reel by ID."""
     reel = await reel_service.find_by_id(_id)
     if reel is None:
-        raise ReelNotFound(_id)
+        raise ReelNotFoundException(_id)
     return reel
 
 @router.patch("/{_id}", response_model=ReelResponse)
@@ -42,7 +42,7 @@ async def update(
     """Update a reel by ID."""
     reel = await reel_service.update(_id, reel_update_data)
     if reel is None:
-        raise ReelNotFound(_id)
+        raise ReelNotFoundException(_id)
     return reel
 
 @router.delete("/{_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -50,5 +50,5 @@ async def delete(_id: int, reel_service: ReelService = Depends(get_reel_service)
     """Delete a reel by ID."""
     success = await reel_service.delete(_id)
     if not success:
-        raise ReelNotFound(_id)
+        raise ReelNotFoundException(_id)
     return {}

@@ -5,3 +5,6 @@ opencv-python
 python-multipart
 numpy
 sqlalchemy
+authlib
+pyjwt
+httpx

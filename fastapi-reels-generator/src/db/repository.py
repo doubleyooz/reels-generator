@@ -51,6 +51,26 @@ class Repository:
             # Use select() for async queries instead of query()
             result = await session.execute(select(self.model).filter(self.model.id == id))
             return result.scalars().first()
+        
+    async def find_one(self, data: dict) -> Optional[T]:
+        """
+        Find a single record matching the provided attributes.
+        
+        Args:
+            data: A dictionary of attribute names and values to filter by (e.g., {"email": "user@example.com"}).
+        
+        Returns:
+            The model instance if found, else None.
+        """
+        async with self.db.get_session() as session:
+            query = select(self.model)
+            for key, value in data.items():
+                if hasattr(self.model, key):
+                    query = query.filter(getattr(self.model, key) == value)
+                else:
+                    raise ValueError(f"Invalid attribute {key} for model {self.model.__name__}")
+            result = await session.execute(query)
+            return result.scalars().first()
 
     async def find_all(self) -> List[T]:
         """
