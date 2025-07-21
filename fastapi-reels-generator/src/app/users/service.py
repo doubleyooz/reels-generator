@@ -1,9 +1,9 @@
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.db.database import Database
-from app.db.repository import Repository
-from app.users.schema import UserCreateModel, UserUpdateModel, User
+from src.db.database import Database
+from src.db.repository import Repository
+from src.app.users.schema import UserCreateModel, UserUpdateModel, User
 
 class UserService:
     def __init__(self, db: Database):

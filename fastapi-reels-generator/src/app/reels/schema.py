@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, String, Integer, ForeignKey, DateTime, Col
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import sessionmaker
-from app.config import DB_CONNECTION
+from src.config import DB_CONNECTION
 from datetime import datetime
 
 # Create base class for declarative models

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status, FastAPI
 from typing import List
 from sqlalchemy.exc import IntegrityError
-from app.db.database import Database
-from app.reels.service import ReelService
-from app.reels.schema import ReelCreateModel, ReelUpdateModel, ReelResponse
-from app.reels.exception import ReelBadRequest, ReelNotFound
+from src.db.database import Database
+from src.app.reels.service import ReelService
+from src.app.reels.schema import ReelCreateModel, ReelUpdateModel, ReelResponse
+from src.app.reels.exception import ReelBadRequest, ReelNotFound
 
 async def get_reel_service(app: FastAPI = Depends(lambda: app)) -> ReelService:
     """Dependency to provide ReelService with initialized Database."""

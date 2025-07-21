@@ -1,9 +1,9 @@
 from typing import Type, TypeVar, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.db.database import Database
-from app.users.schema import User
-from app.reels.schema import Reel
+from src.db.database import Database
+from src.app.users.schema import User
+from src.app.reels.schema import Reel
 
 # Define a generic type for models
 T = TypeVar('T')

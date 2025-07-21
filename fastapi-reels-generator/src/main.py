@@ -1,5 +1,5 @@
-from app.users import controller as users_controller
-from app.reels import controller as reels_controller
+from src.app.users import controller as users_controller
+from src.app.reels import controller as reels_controller
 from fastapi import FastAPI
 
 app = FastAPI()

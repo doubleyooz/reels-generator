@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 # app/database.py
-from app.config import DB_CONNECTION
-from app.users.schema import User
-from app.reels.schema import Reel
+from src.config import DB_CONNECTION
+from src.app.users.schema import User
+from src.app.reels.schema import Reel
 
 class Database:
     def __init__(self, connection_string=DB_CONNECTION):
