@@ -10,6 +10,18 @@ from datetime import datetime
 # Create base class for declarative models
 Base = declarative_base()
 
+class ReelResponse(BaseModel):
+    id: int
+    file: str
+    audio: str
+    images: List[str]
+    created_at: datetime
+    user_id: int
+
+    class Config:
+        orm_mode = True  # Enable ORM compatibility to convert SQLAlchemy models
+
+
 class Reel(Base):
     __tablename__ = 'reels'
 
