@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, FastAPI
+from fastapi import APIRouter, Depends, Request, status, FastAPI
 from typing import List
 from sqlalchemy.exc import IntegrityError
 from src.db.database import Database
@@ -6,9 +6,10 @@ from src.app.reels.service import ReelService
 from src.app.reels.schema import ReelCreateModel, ReelUpdateModel, ReelResponse
 from src.app.reels.exception import ReelBadRequestException, ReelNotFoundException
 
-async def get_reel_service(app: FastAPI = Depends(lambda: app)) -> ReelService:
+async def get_reel_service(request: Request) -> ReelService:
     """Dependency to provide ReelService with initialized Database."""
-    return ReelService(app.state.db)
+    return ReelService(request.app.state.db)
+
 
 router = APIRouter(prefix="/reels", tags=["reels"])
 
@@ -50,5 +51,5 @@ async def delete(_id: int, reel_service: ReelService = Depends(get_reel_service)
     """Delete a reel by ID."""
     success = await reel_service.delete(_id)
     if not success:
-        raise ReelNotFoundException(_id)
+        raise ReelNotFoundException()
     return {}

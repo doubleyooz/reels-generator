@@ -4,7 +4,8 @@ pydantic
 opencv-python
 python-multipart
 numpy
-sqlalchemy
+sqlalchemy[asyncio]
 authlib
 pyjwt
 httpx
+asyncpg

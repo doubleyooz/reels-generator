@@ -30,7 +30,7 @@ class Repository:
         Returns:
             The created model instance.
         """
-        async with self.db.get_session() as session:
+        async with await self.db.get_session() as session:
             instance = self.model(**attributes)
             session.add(instance)
             await session.commit()
@@ -47,7 +47,7 @@ class Repository:
         Returns:
             The model instance if found, else None.
         """
-        async with self.db.get_session() as session:
+        async with await self.db.get_session() as session:
             # Use select() for async queries instead of query()
             result = await session.execute(select(self.model).filter(self.model.id == id))
             return result.scalars().first()
@@ -62,7 +62,7 @@ class Repository:
         Returns:
             The model instance if found, else None.
         """
-        async with self.db.get_session() as session:
+        async with await self.db.get_session() as session:
             query = select(self.model)
             for key, value in data.items():
                 if hasattr(self.model, key):
@@ -79,7 +79,7 @@ class Repository:
         Returns:
             A list of all model instances.
         """
-        async with self.db.get_session() as session:
+        async with await self.db.get_session() as session:
             result = await session.execute(select(self.model))
             return result.scalars().all()
 
@@ -94,7 +94,7 @@ class Repository:
         Returns:
             The updated model instance if found, else None.
         """
-        async with self.db.get_session() as session:
+        async with await self.db.get_session() as session:
             result = await session.execute(select(self.model).filter(self.model.id == id))
             instance = result.scalars().first()
             if instance:
@@ -115,7 +115,7 @@ class Repository:
         Returns:
             True if the record was deleted, False if not found.
         """
-        async with self.db.get_session() as session:
+        async with await self.db.get_session() as session:
             result = await session.execute(select(self.model).filter(self.model.id == id))
             instance = result.scalars().first()
             if instance:
