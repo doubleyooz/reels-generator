@@ -1,10 +1,8 @@
+import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends
-import jwt
 
 from src.app.auth.exception import AuthUnauthorisedException
-
-
 from src.env import ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET, ALGORITHM
 
 class AuthService:

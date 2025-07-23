@@ -1,8 +1,9 @@
+import jwt
 from datetime import timedelta
 from fastapi import APIRouter, Depends, Request, status, FastAPI
 from fastapi.security import OAuth2PasswordBearer
 from typing import List
-import jwt
+
 from authlib.integrations.base_client import OAuthError
 from authlib.integrations.starlette_client import OAuth
 from authlib.oauth2.rfc6749 import OAuth2Token
@@ -14,7 +15,7 @@ from src.app.auth.service import AuthService
 from src.app.users.schema import UserCreateModel
 from src.app.users.service import UserService
 from src.db.database import Database
-from src.env import ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI
+from src.env import ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET, ALGORITHM, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -26,24 +27,25 @@ oauth.register(
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid email profile"},
 )
+async def get_user_service(request: Request) -> UserService:
+    """Dependency to provide ReelService with initialized Database."""
+    return UserService(request.app.state.db)
 
-async def get_user_service(app: FastAPI = Depends(lambda: app)) -> UserService:
-    """Dependency to provide UserService with initialized Database."""
-    return UserService(app.state.db)
 
-async def get_auth_service(app: FastAPI = Depends(lambda: app)) -> AuthService:
-    """Dependency to provide AuthService with initialized Database."""
-    return AuthService(app.state.db)
-
+async def get_auth_service(request: Request) -> AuthService:
+    """Dependency to provide ReelService with initialized Database."""
+    return AuthService()
 
 # New Google OAuth endpoints
 @router.get("/login/google")
 async def login_google(request: Request):
     redirect_uri = GOOGLE_REDIRECT_URI
+    print(GOOGLE_REDIRECT_URI)
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
-@router.get("/auth/google", response_model=AuthResponse)
+@router.get("/google", response_model=AuthResponse)
 async def auth_google(request: Request, user_service: UserService = Depends(get_user_service), auth_service: AuthService = Depends(get_auth_service)):
+    print('hereeee')
     try:
         token = await oauth.google.authorize_access_token(request)
         user_info = token.get("userinfo")
@@ -58,6 +60,7 @@ async def auth_google(request: Request, user_service: UserService = Depends(get_
                 name=user_info.get("name", email.split("@")[0]),
                 email=email
             )
+            print(user_data)
             existing_user = await user_service.create(user_data)
 
         # Generate JWT token

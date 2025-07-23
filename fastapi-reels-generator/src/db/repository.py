@@ -1,3 +1,4 @@
+import uuid
 from typing import Type, TypeVar, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -22,7 +23,7 @@ class Repository:
 
     async def create(self, **attributes) -> T:
         """
-        Create a new record in the database.
+        Create a new record in the database, generating a UUID for the 'id' if not provided.
         
         Args:
             **attributes: Attributes to set on the new model instance.
@@ -31,27 +32,29 @@ class Repository:
             The created model instance.
         """
         async with await self.db.get_session() as session:
+            # Generate a UUID if 'id' is not provided in attributes
+            if 'id' not in attributes:
+                attributes['id'] = uuid.uuid4()
             instance = self.model(**attributes)
             session.add(instance)
             await session.commit()
             await session.refresh(instance)
             return instance
 
-    async def find_by_id(self, id: int) -> Optional[T]:
+    async def find_by_id(self, id: uuid.UUID) -> Optional[T]:
         """
-        Find a record by its ID.
+        Find a record by its UUID.
         
         Args:
-            id: The ID of the record to find.
+            id: The UUID of the record to find.
         
         Returns:
             The model instance if found, else None.
         """
         async with await self.db.get_session() as session:
-            # Use select() for async queries instead of query()
             result = await session.execute(select(self.model).filter(self.model.id == id))
             return result.scalars().first()
-        
+
     async def find_one(self, data: dict) -> Optional[T]:
         """
         Find a single record matching the provided attributes.
@@ -83,12 +86,12 @@ class Repository:
             result = await session.execute(select(self.model))
             return result.scalars().all()
 
-    async def update(self, id: int, **attributes) -> Optional[T]:
+    async def update(self, id: uuid.UUID, **attributes) -> Optional[T]:
         """
-        Update a record by its ID.
+        Update a record by its UUID.
         
         Args:
-            id: The ID of the record to update.
+            id: The UUID of the record to update.
             **attributes: Attributes to update on the model instance.
         
         Returns:
@@ -105,12 +108,12 @@ class Repository:
                 return instance
             return None
 
-    async def delete(self, id: int) -> bool:
+    async def delete(self, id: uuid.UUID) -> bool:
         """
-        Delete a record by its ID.
+        Delete a record by its UUID.
         
         Args:
-            id: The ID of the record to delete.
+            id: The UUID of the record to delete.
         
         Returns:
             True if the record was deleted, False if not found.

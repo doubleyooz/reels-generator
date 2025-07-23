@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -41,7 +42,7 @@ class UserService:
         user = await self.repository.create(**user_dict)
         return User.from_orm(user)
 
-    async def find_by_id(self, _id: int) -> Optional[User]:
+    async def find_by_id(self, _id: uuid.UUID) -> Optional[User]:
         """
         Retrieve a user by its ID.
         
@@ -67,7 +68,7 @@ class UserService:
         user = await self.repository.find_one( {"email": email} )
         return User.from_orm(user) if user else None
 
-    async def update(self, _id: int, user_update_data: UserUpdateModel) -> Optional[User]:
+    async def update(self, _id: uuid.UUID, user_update_data: UserUpdateModel) -> Optional[User]:
         """
         Update a user by its ID.
         
@@ -81,7 +82,7 @@ class UserService:
         user = await self.repository.update(_id, **user_update_data.dict(exclude_unset=True))
         return User.from_orm(user) if user else None
 
-    async def delete(self, user_id: int) -> bool:
+    async def delete(self, user_id: uuid.UUID) -> bool:
         """
         Delete a user by its ID.
         

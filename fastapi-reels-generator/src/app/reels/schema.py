@@ -1,48 +1,57 @@
-from typing import List
+import uuid
+from typing import Annotated, List, Optional
 from pydantic import BaseModel
-from sqlalchemy import create_engine, String, Integer, ForeignKey, DateTime, Column
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import String, ForeignKey, DateTime, Column
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import UUID  # For PostgreSQL UUID support
 from src.db.database import Base
 from src.env import DB_CONNECTION
 from datetime import datetime
 
 class ReelResponse(BaseModel):
-    id: int
+    id: uuid.UUID  # Changed from int to uuid.UUID
+    title: str
     file: str
     audio: str
     images: List[str]
-    created_at: datetime
-    user_id: int
+    user_id: uuid.UUID  # Changed from int to uuid.UUID
+    created_at: datetime = None
 
     class Config:
-        orm_mode = True  # Enable ORM compatibility to convert SQLAlchemy models
+        from_attributes = True
 
 class Reel(Base):
     __tablename__ = 'reels'
-
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )  # UUID as primary key
+    title = Column(String, nullable=False)
     file = Column(String, nullable=False)
     audio = Column(String, nullable=False)
     images = Column(ARRAY(String), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey('users.id'), nullable=False, index=True
+    )  # Changed to UUID for ForeignKey
     user: Mapped["User"] = relationship(back_populates="reels")
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    
+
 class ReelCreateModel(BaseModel):
+    title: str
     file: str
     audio: str
     images: List[str]
-    user_id: int
-    created_at: datetime = None  # Optional, will use default in model if not provided
+    user_id: uuid.UUID  # Changed from int to uuid.UUID
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
 
 class ReelUpdateModel(BaseModel):
-    file: str | None = None
-    audio: str | None = None
-    images: List[str] | None = None
+    title: Optional[str] = None
+    file: Optional[str] = None
+    audio: Optional[str] = None
+    images: Optional[List[str]] = None
 
     class Config:
         from_attributes = True

@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -25,7 +26,7 @@ class ReelService:
         reels = await self.repository.find_all()
         return [Reel.from_orm(reel) for reel in reels]
 
-    async def find_by_user(self, user_id: int) -> List[Reel]:
+    async def find_by_user(self, user_id: uuid.UUID) -> List[Reel]:
         """
         Retrieve all reels for a specific user.
         
@@ -56,7 +57,7 @@ class ReelService:
         reel = await self.repository.create(**reel_dict)
         return Reel.from_orm(reel)
 
-    async def find_by_id(self, reel_id: int) -> Optional[Reel]:
+    async def find_by_id(self, reel_id: uuid.UUID) -> Optional[Reel]:
         """
         Retrieve a reel by its ID.
         
@@ -69,7 +70,7 @@ class ReelService:
         reel = await self.repository.find_by_id(reel_id)
         return Reel.from_orm(reel) if reel else None
 
-    async def update(self, reel_id: int, reel_update_data: ReelUpdateModel) -> Optional[Reel]:
+    async def update(self, reel_id: uuid.UUID, reel_update_data: ReelUpdateModel) -> Optional[Reel]:
         """
         Update a reel by its ID.
         
@@ -83,7 +84,7 @@ class ReelService:
         reel = await self.repository.update(reel_id, **reel_update_data.dict(exclude_unset=True))
         return Reel.from_orm(reel) if reel else None
 
-    async def delete(self, reel_id: int) -> bool:
+    async def delete(self, reel_id: uuid.UUID) -> bool:
         """
         Delete a reel by its ID.
         

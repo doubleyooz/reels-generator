@@ -9,3 +9,5 @@ authlib
 pyjwt
 httpx
 asyncpg
+slowapi
+itsdangerous
