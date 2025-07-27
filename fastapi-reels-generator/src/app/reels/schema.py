@@ -23,9 +23,6 @@ class ReelResponse(BaseModel):
 
 class Reel(Base):
     __tablename__ = 'reels'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )  # UUID as primary key
     title = Column(String, nullable=False)
     file = Column(String, nullable=False)
     audio = Column(String, nullable=False)

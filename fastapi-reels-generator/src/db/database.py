@@ -1,11 +1,15 @@
+import uuid
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import UUID 
 
 from src.env import DB_CONNECTION
 
 class Base(DeclarativeBase):
     """Abstract base model with a common id column"""
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )  # UUID as primary key
     
 class Database:
     def __init__(self, connection_string=DB_CONNECTION):
@@ -23,6 +27,8 @@ class Database:
 
     async def get_session(self) -> AsyncSession:
         return self.Session()
+    
 
     async def close(self):
         await self.engine.dispose()
+        

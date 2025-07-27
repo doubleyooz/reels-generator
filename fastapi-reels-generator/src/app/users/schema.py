@@ -25,10 +25,7 @@ class UserResponse(BaseModel):
 
 # SQLAlchemy model for database table
 class User(Base):
-    __tablename__ = 'users'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )  # UUID as primary key
+    __tablename__ = 'users'   
     name: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String)
     reels: Mapped[list["Reel"]] = relationship("Reel", back_populates="user")
