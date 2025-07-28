@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from src.db.database import Database
 from src.db.repository import Repository
-from src.app.users.schema import UserCreateModel, UserUpdateModel, User
+from src.app.users.schema import UserCreateModel, UserResponse, UserUpdateModel, User
 
 class UserService:
     def __init__(self, db: Database):
@@ -27,7 +27,7 @@ class UserService:
         return [User.from_orm(user) for user in users]
 
 
-    async def create(self, data: UserCreateModel) -> User:
+    async def create(self, data: UserCreateModel) -> UserResponse:
         """
         Create a new user in the database.
         
@@ -39,9 +39,9 @@ class UserService:
         """
         user_dict = data.dict(exclude_unset=True)
     
-        user = await self.repository.create(**user_dict)
-        return User.from_orm(user)
-
+        return await self.repository.create(**user_dict)
+       
+    
     async def find_by_id(self, _id: uuid.UUID) -> Optional[User]:
         """
         Retrieve a user by its ID.
@@ -52,8 +52,7 @@ class UserService:
         Returns:
             The User object if found, else None.
         """
-        user = await self.repository.find_by_id(_id)
-        return User.from_orm(user) if user else None
+        return await self.repository.find_by_id(_id)
 
     async def find_by_email(self, email: str) -> Optional[User]:
         """
@@ -65,8 +64,7 @@ class UserService:
         Returns:
             The User object if found, else None.
         """
-        user = await self.repository.find_one( {"email": email} )
-        return User.from_orm(user) if user else None
+        return await self.repository.find_one( {"email": email} )
 
     async def update(self, _id: uuid.UUID, user_update_data: UserUpdateModel) -> Optional[User]:
         """
@@ -79,8 +77,7 @@ class UserService:
         Returns:
             The updated User object if found, else None.
         """
-        user = await self.repository.update(_id, **user_update_data.dict(exclude_unset=True))
-        return User.from_orm(user) if user else None
+        return await self.repository.update(_id, **user_update_data.dict(exclude_unset=True))
 
     async def delete(self, user_id: uuid.UUID) -> bool:
         """

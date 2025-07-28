@@ -1,7 +1,6 @@
 import jwt
 from datetime import timedelta
 from fastapi import APIRouter, Depends, Request, status, FastAPI
-from fastapi.security import OAuth2PasswordBearer
 from typing import List
 
 from authlib.integrations.base_client import OAuthError
@@ -64,7 +63,7 @@ async def auth_google(request: Request, user_service: UserService = Depends(get_
             existing_user = await user_service.create(user_data)
 
         # Generate JWT token
-        access_token = await auth_service.create_access_token(data={"sub": email})
+        access_token = auth_service.create_access_token(data={"sub": email})
         return {"access_token": access_token, "token_type": "bearer"}
     except Exception as e:
         raise AuthBadRequestException(e)

@@ -51,7 +51,7 @@ class ReelService:
         Returns:
             The created Reel object.
         """
-        reel_dict = reel_data.dict(exclude_unset=True)
+        reel_dict = reel_data.dict()
         if not reel_dict.get('created_at'):
             del reel_dict['created_at']  # Let model default handle created_at
         reel = await self.repository.create(**reel_dict)

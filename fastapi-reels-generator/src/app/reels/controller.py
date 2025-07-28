@@ -30,6 +30,45 @@ async def create(
     title: Annotated[str, Form()],
     user_id: Annotated[str, Form()],  # Accept as string
     video: UploadFile = File(...),
+    reel_service: ReelService = Depends(get_reel_service),
+):
+    """Create a new reel."""
+    try:
+        # Log raw request headers for debugging
+        print(f"Title: {title}")
+        print(f"User ID: {user_id}")
+        print(f"Video: {video.filename}")
+        
+        # Save file
+        file_filename = f"{uuid.uuid4()}_{video.filename}"
+        file_path = os.path.join(UPLOAD_DIR, file_filename)
+        with open(file_path, "wb") as f:
+            f.write(video.file.read())
+
+        # Create ReelCreateModel
+        reel_data = ReelCreateModel(
+            title=title,
+            file=file_path,
+            user_id=user_id,
+        )
+        print(f"Received reel_data: {reel_data}")
+        print(f"File path: {file_path}")
+
+        return await reel_service.create(reel_data)
+    except IntegrityError as e:
+        print(f"IntegrityError: {e}")
+        raise ReelBadRequestException()
+    except Exception as e:
+        print(f"ValidationError: {e}")
+        raise ReelUnprocessableEntityException(str(e))
+
+@limiter.limit("5/minute")
+@router.post("/generate", status_code=status.HTTP_201_CREATED, response_model=ReelResponse)
+async def generate(
+    request: Request,
+    title: Annotated[str, Form()],
+    user_id: Annotated[str, Form()],  # Accept as string
+    video: UploadFile = File(...),
     audio: UploadFile = File(...),
     images: List[UploadFile] = File(default=[]),
     reel_service: ReelService = Depends(get_reel_service),
@@ -68,8 +107,6 @@ async def create(
         reel_data = ReelCreateModel(
             title=title,
             file=file_path,
-            audio=audio_path,
-            images=image_paths,
             user_id=user_id,
         )
         print(f"Received reel_data: {reel_data}")
@@ -84,6 +121,7 @@ async def create(
     except Exception as e:
         print(f"ValidationError: {e}")
         raise ReelUnprocessableEntityException(str(e))
+
 
 @router.get("/{_id}", response_model=ReelResponse)
 async def find_by_id(_id: uuid.UUID, reel_service: ReelService = Depends(get_reel_service)):

@@ -6,9 +6,9 @@ from src.app.auth.exception import AuthUnauthorisedException
 from src.env import ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET, ALGORITHM
 
 class AuthService:
-    def create_access_token(data: dict):
+    def create_access_token(self, data: dict):
         to_encode = data.copy()
-        expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRATION)
+        expires_delta = timedelta(minutes=int(ACCESS_TOKEN_EXPIRATION))
         if expires_delta:
             expire = datetime.now(timezone.utc) + expires_delta
         else:

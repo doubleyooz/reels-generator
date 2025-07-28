@@ -13,8 +13,6 @@ class ReelResponse(BaseModel):
     id: uuid.UUID  # Changed from int to uuid.UUID
     title: str
     file: str
-    audio: str
-    images: List[str]
     user_id: uuid.UUID  # Changed from int to uuid.UUID
     created_at: datetime = None
 
@@ -25,8 +23,6 @@ class Reel(Base):
     __tablename__ = 'reels'
     title = Column(String, nullable=False)
     file = Column(String, nullable=False)
-    audio = Column(String, nullable=False)
-    images = Column(ARRAY(String), nullable=False)
     user_id = Column(
         UUID(as_uuid=True), ForeignKey('users.id'), nullable=False, index=True
     )  # Changed to UUID for ForeignKey
@@ -36,6 +32,14 @@ class Reel(Base):
 class ReelCreateModel(BaseModel):
     title: str
     file: str
+    user_id: uuid.UUID  # Changed from int to uuid.UUID
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+class ReelGenerateModel(BaseModel):
+    title: str
     audio: str
     images: List[str]
     user_id: uuid.UUID  # Changed from int to uuid.UUID
@@ -47,8 +51,6 @@ class ReelCreateModel(BaseModel):
 class ReelUpdateModel(BaseModel):
     title: Optional[str] = None
     file: Optional[str] = None
-    audio: Optional[str] = None
-    images: Optional[List[str]] = None
 
     class Config:
         from_attributes = True
