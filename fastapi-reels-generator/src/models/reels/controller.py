@@ -1,20 +1,17 @@
 from fastapi import APIRouter, Depends, Request, status, File, UploadFile, Form
 from typing import Annotated, List
 from sqlalchemy.exc import IntegrityError
+
 from src.db.database import Database
-from src.app.reels.service import ReelService
-from src.app.reels.schema import ReelCreateModel, ReelUpdateModel, ReelResponse
-from src.app.reels.exception import ReelBadRequestException, ReelNotFoundException, ReelUnprocessableEntityException
+from src.dependencies import get_reel_service
+from src.models.reels.service import ReelService
+from src.models.reels.schema import ReelCreateModel, ReelUpdateModel, ReelResponse
+from src.models.reels.exception import ReelBadRequestException, ReelNotFoundException, ReelUnprocessableEntityException
 from src.env import UPLOAD_DIR
 from src.rate_limiter import limiter
 
 import os
 import uuid
-
-async def get_reel_service(request: Request) -> ReelService:
-    """Dependency to provide ReelService with initialized Database."""
-    return ReelService(request.app.state.db)
-
 
 router = APIRouter(prefix="/reels", tags=["reels"])
 

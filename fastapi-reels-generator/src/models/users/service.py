@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from src.db.database import Database
 from src.db.repository import Repository
-from src.app.users.schema import UserCreateModel, UserResponse, UserUpdateModel, User
+from src.models.users.schema import UserCreateModel, UserResponse, UserUpdateModel, User
 
 class UserService:
     def __init__(self, db: Database):

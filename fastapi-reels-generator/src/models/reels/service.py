@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from src.db.database import Database
 from src.db.repository import Repository
-from src.app.reels.schema import ReelCreateModel, ReelUpdateModel, Reel
+from src.models.reels.schema import ReelCreateModel, ReelUpdateModel, Reel
 
 class ReelService:
     def __init__(self, db: Database):

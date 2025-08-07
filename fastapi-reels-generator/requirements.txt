@@ -12,3 +12,4 @@ asyncpg
 slowapi
 itsdangerous
 alembic
+boto3

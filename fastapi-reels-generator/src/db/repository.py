@@ -3,8 +3,8 @@ from typing import Type, TypeVar, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from src.db.database import Database
-from src.app.users.schema import User
-from src.app.reels.schema import Reel
+from src.models.users.schema import User
+from src.models.reels.schema import Reel
 
 # Define a generic type for models
 T = TypeVar('T')
@@ -65,6 +65,7 @@ class Repository:
         Returns:
             The model instance if found, else None.
         """
+        print(data)
         async with await self.db.get_session() as session:
             query = select(self.model)
             for key, value in data.items():

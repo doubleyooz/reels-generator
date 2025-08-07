@@ -3,13 +3,10 @@ from fastapi import APIRouter, Depends, Request, status, FastAPI
 from typing import List
 from sqlalchemy.exc import IntegrityError
 from src.db.database import Database
-from src.app.users.service import UserService
-from src.app.users.schema import UserCreateModel, UserUpdateModel, UserResponse
-from src.app.users.exception import UserBadRequestException, UserNotFoundException
-
-async def get_user_service(request: Request) -> UserService:
-    """Dependency to provide UserService with initialized Database."""
-    return UserService(request.app.state.db)
+from src.models.users.service import UserService
+from src.models.users.schema import UserCreateModel, UserUpdateModel, UserResponse
+from src.models.users.exception import UserBadRequestException, UserNotFoundException
+from src.dependencies import get_user_service
 
 router = APIRouter(prefix="/users", tags=["users"])
 

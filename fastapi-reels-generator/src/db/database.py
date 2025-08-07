@@ -20,8 +20,8 @@ class Database:
     async def init_db(self):
         async with self.engine.begin() as conn:
                         
-            from src.app.users.schema import User
-            from src.app.reels.schema import Reel
+            from src.models.users.schema import User
+            from src.models.reels.schema import Reel
             await conn.run_sync(Reel.metadata.create_all)
             await conn.run_sync(User.metadata.create_all)
 

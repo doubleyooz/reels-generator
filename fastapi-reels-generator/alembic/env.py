@@ -5,8 +5,8 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from src.db.database import Base
-from src.app.users.schema import User
-from src.app.reels.schema import Reel
+from src.models.users.schema import User
+from src.models.reels.schema import Reel
 
 from alembic import context
 

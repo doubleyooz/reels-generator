@@ -4,9 +4,9 @@ from contextlib import asynccontextmanager
 from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
 
-from src.app.auth import controller as auth_controller
-from src.app.users import controller as users_controller
-from src.app.reels import controller as reels_controller
+from src.auth import controller as auth_controller
+from src.models.users import controller as users_controller
+from src.models.reels import controller as reels_controller
 from src.db.database import Database
 from src.env import CLIENT, UPLOAD_DIR, SESSION_SECRET_KEY
 
