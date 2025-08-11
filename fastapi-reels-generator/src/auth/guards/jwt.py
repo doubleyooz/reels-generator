@@ -1,7 +1,7 @@
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
-from .auth_handler import decode_jwt
+from src.auth.exception import AuthUnauthorisedException
+from src.common.jwt_handler import decode_jwt
 
 
 class JWTGuard(HTTPBearer):
@@ -12,21 +12,19 @@ class JWTGuard(HTTPBearer):
         credentials: HTTPAuthorizationCredentials = await super(JWTGuard, self).__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
-            if not self.verify_jwt(credentials.credentials):
-                raise HTTPException(status_code=403, detail="Invalid token or expired token.")
-            return credentials.credentials
+                raise AuthUnauthorisedException("Invalid authentication scheme.")
+            payload = self.verify_jwt(credentials.credentials)
+            if payload is None:
+                raise AuthUnauthorisedException("Invalid token or expired token.")
+            print('Verified token:', payload)
+            return payload
         else:
-            raise HTTPException(status_code=403, detail="Invalid authorization code.")
+            raise AuthUnauthorisedException("Invalid authorization code.")
 
     def verify_jwt(self, jwtoken: str) -> bool:
-        isTokenValid: bool = False
-
         try:
             payload = decode_jwt(jwtoken)
         except:
             payload = None
-        if payload:
-            isTokenValid = True
-
-        return isTokenValid
+        
+        return payload

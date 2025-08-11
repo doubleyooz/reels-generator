@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from src.db.database import Database
 from src.dependencies import get_reel_service
+from src.auth.guards.jwt import JWTGuard
 from src.models.reels.service import ReelService
 from src.models.reels.schema import ReelCreateModel, ReelUpdateModel, ReelResponse
 from src.models.reels.exception import ReelBadRequestException, ReelNotFoundException, ReelUnprocessableEntityException
@@ -25,15 +26,15 @@ async def find_all(reel_service: ReelService = Depends(get_reel_service)):
 async def create(
     request: Request,
     title: Annotated[str, Form()],
-    user_id: Annotated[str, Form()],  # Accept as string
     video: UploadFile = File(...),
+    payload = Depends(JWTGuard()),
     reel_service: ReelService = Depends(get_reel_service),
 ):
     """Create a new reel."""
     try:
         # Log raw request headers for debugging
         print(f"Title: {title}")
-        print(f"User ID: {user_id}")
+        print(f"User ID: {payload.id}")
         print(f"Video: {video.filename}")
         
         # Save file
@@ -46,7 +47,7 @@ async def create(
         reel_data = ReelCreateModel(
             title=title,
             file=file_path,
-            user_id=user_id,
+            user_id=payload.id,
         )
         print(f"Received reel_data: {reel_data}")
         print(f"File path: {file_path}")

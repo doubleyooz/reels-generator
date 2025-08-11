@@ -24,6 +24,7 @@ class AuthService:
     async def login_google(self, data: UserCreateModel):
         email = data.email
         name = data.name
+        print(data)
         existing_user = await self.user_service.find_by_email(email)
         if not existing_user:
             user_data = UserCreateModel(
@@ -32,8 +33,7 @@ class AuthService:
             )
             print(user_data)
             existing_user = await self.user_service.create(user_data)
-        else:
-            raise AuthUnauthorisedException()
+    
         return existing_user 
             
    
