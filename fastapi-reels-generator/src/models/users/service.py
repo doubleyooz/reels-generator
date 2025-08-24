@@ -27,7 +27,7 @@ class UserService:
         return [User.from_orm(user) for user in users]
 
 
-    async def create(self, data: UserCreateModel) -> UserResponse:
+    async def create(self, data: UserCreateModel) -> User:
         """
         Create a new user in the database.
         

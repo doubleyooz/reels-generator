@@ -11,6 +11,7 @@ class AuthService:
         self.user_service = user_service
         
     def create_access_token(self, data: dict):
+        print('create access token')
         to_encode = data.copy()
         expires_delta = timedelta(minutes=int(ACCESS_TOKEN_EXPIRATION))
         if expires_delta:
@@ -24,16 +25,16 @@ class AuthService:
     async def login_google(self, data: UserCreateModel):
         email = data.email
         name = data.name
-        print(data)
+        
         existing_user = await self.user_service.find_by_email(email)
         if not existing_user:
+            print('creating new user')
             user_data = UserCreateModel(
                 name=name,
                 email=email
             )
             print(user_data)
             existing_user = await self.user_service.create(user_data)
-    
         return existing_user 
             
    

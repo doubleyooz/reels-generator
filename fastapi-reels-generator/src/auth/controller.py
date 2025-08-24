@@ -51,10 +51,10 @@ async def auth_google(request: Request, auth_service: AuthService = Depends(get_
         # Check if user exists, otherwise create a new one
         print('Check if user exists, otherwise create a new one')
         user = await auth_service.login_google(UserCreateModel(email=email, name=user_info.get("name", email.split("@")[0])))
-        print('user', user)
+        print(user.id)
         # Generate JWT token
         print('Generate JWT token')
-        access_token = auth_service.create_access_token(data={"sub": user.id})
+        access_token = auth_service.create_access_token(data={"sub": user.id}) #breaks right here
         return {"access_token": access_token, "token_type": "bearer"}
     except Exception as e:
         if isinstance(e, HTTPException):
